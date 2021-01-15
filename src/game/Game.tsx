@@ -1,7 +1,6 @@
-// import { ActivePlayers } from "boardgame.io/core";
-import { Guess } from "./types";
+import { Guess } from './types';
 
-const words = ["pig", "diamond", "butterfly"];
+const words = ['pig', 'diamond', 'butterfly'];
 
 const getRandomWord = () => words[Math.floor(Math.random() * words.length)];
 
@@ -20,7 +19,7 @@ const guess = (G: any, ctx: any, guess: string) => {
 export const Sketch = {
   setup: (ctx: any) => {
     ctx.events.setActivePlayers({
-      others: "guess",
+      others: 'guess',
     });
     const guesses: Array<Guess> = [];
     return { correctWord: getRandomWord(), guesses };
@@ -41,10 +40,10 @@ export const Sketch = {
       start: true,
       moves: { guess },
       endIf: (G: any) => G.guesses.some((guess: Guess) => guess.correct),
-      onEnd: (G: any) => { 
-        const winner = G.guesses.find((guess: Guess) => guess.correct).guesser
-        G.winner = winner
-      }
+      onEnd: (G: any) => {
+        const winner = G.guesses.find((guess: Guess) => guess.correct).guesser;
+        G.winner = winner;
+      },
     },
     announceWinners: {},
   },

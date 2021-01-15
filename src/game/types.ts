@@ -1,5 +1,5 @@
 export type Guess = {
-  guess: string,
-  guesser: string,
-  correct: boolean
-}
+  guess: string;
+  guesser: string;
+  correct: boolean;
+};
