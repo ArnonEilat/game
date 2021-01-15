@@ -1,11 +1,13 @@
 // import { ActivePlayers } from "boardgame.io/core";
 import { Guess } from "./types";
+import { Ctx } from "boardgame.io";
 
 const words = ["pig", "diamond", "butterfly"];
 
-const getRandomWord = () => words[Math.floor(Math.random() * words.length)];
+const getRandomWord = (ctx: Ctx) =>
+  words[Math.floor(ctx.random!.Number() * words.length)];
 
-const guess = (G: any, ctx: any, guess: string) => {
+const guess = (G: any, ctx: Ctx, guess: string) => {
   const correct = guess === G.correctWord;
   G.guesses.push({
     guess,
@@ -13,39 +15,34 @@ const guess = (G: any, ctx: any, guess: string) => {
     correct,
   });
   if (correct) {
-    ctx.events.endStage();
+    ctx.events?.setActivePlayers!({all: 'announceWinner'})
+    G.winner = ctx.playerID
   }
 };
 
+const getFreshState = (ctx: Ctx) => {
+  const guesses: Array<Guess> = [];
+  return { correctWord: getRandomWord(ctx), guesses };
+};
+
 export const Sketch = {
-  setup: (ctx: any) => {
-    ctx.events.setActivePlayers({
-      others: "guess",
-    });
-    const guesses: Array<Guess> = [];
-    return { correctWord: getRandomWord(), guesses };
-  },
+  setup: (ctx: Ctx) => getFreshState(ctx),
 
   turn: {
-    stages: {
-      guess: {
-        moves: {
-          guess,
-        },
-      },
+    onBegin: (G: any, ctx: Ctx) => {
+      ctx.events?.setActivePlayers!({currentPlayer: 'draw', others: 'guess'})
+      return getFreshState(ctx)
     },
-  },
-
-  phases: {
-    draw: {
-      start: true,
-      moves: { guess },
-      endIf: (G: any) => G.guesses.some((guess: Guess) => guess.correct),
-      onEnd: (G: any) => { 
-        const winner = G.guesses.find((guess: Guess) => guess.correct).guesser
-        G.winner = winner
+    stages: {
+      draw: {
+        moves: {},
+      },
+      guess: {
+        moves: { guess },
+      },
+      announceWinner: {
+        moves: {},
       }
     },
-    announceWinners: {},
   },
 };
