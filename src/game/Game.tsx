@@ -2,7 +2,7 @@
 import { Guess } from "./types";
 import { Ctx } from "boardgame.io";
 
-const words = ["pig", "diamond", "butterfly"];
+const words = ['pig', 'diamond', 'butterfly'];
 
 const getRandomWord = (ctx: Ctx) =>
   words[Math.floor(ctx.random!.Number() * words.length)];
