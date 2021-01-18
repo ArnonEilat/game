@@ -29,5 +29,10 @@ export const Painted = ({ G }: { G: any }) => {
     draw(G.strokes);
   }, [G]);
 
-  return <canvas style={{ boxShadow: '0px 0px 6px 2px #797979', width: '500px' }} ref={canvasRef} />;
+  return (
+    <canvas
+      style={{ boxShadow: '0px 0px 6px 2px #797979', width: '500px' }}
+      ref={canvasRef}
+    />
+  );
 };
