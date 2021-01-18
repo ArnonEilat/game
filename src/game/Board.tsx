@@ -1,6 +1,9 @@
-import React, { useEffect } from "react";
-import { Guess } from "./types";
-import { Ctx } from "boardgame.io";
+import React, { useEffect } from 'react';
+import { Guess } from './types';
+import { Ctx } from 'boardgame.io';
+import './Board.css';
+import Painter from '../components/painter/painter';
+import { Painted } from '../components/painter/Painted';
 
 type BoardPropTypes = {
   G: {
@@ -23,7 +26,7 @@ const GuessList = ({ guesses }: { guesses: Array<Guess> }) => {
     <ul>
       {guesses.map((guess, i: number) => (
         <li key={`guess${i}`}>{`Player ${guess.guesser} guessed ${
-          guess.correct ? "correctly!" : guess.guess
+          guess.correct ? 'correctly!' : guess.guess
         }`}</li>
       ))}
     </ul>
@@ -32,29 +35,39 @@ const GuessList = ({ guesses }: { guesses: Array<Guess> }) => {
 
 const DrawStage = (props: BoardPropTypes) => {
   return (
-    <div>
-      <h2>Your turn to draw!</h2>
-      <div>Secret word is {props.G.correctWord}</div>
-      <GuessList guesses={props.G.guesses} />
+    <div className="container">
+      <div className="left">
+        <h2>Your turn to draw!</h2>
+        <div>Secret word is {props.G.correctWord}</div>
+        <GuessList guesses={props.G.guesses} />
+      </div>
+      <div className="right">
+        <Painter moves={props.moves} />
+      </div>
     </div>
   );
 };
 
 const GuessStage = (props: BoardPropTypes) => {
   return (
-    <div>
-      <h2>Player {props.ctx.currentPlayer} is drawing!</h2>
-      <div>
-        Type your guess:
-        <PlayerInput
-          onKeyPress={(e: any) => {
-            if (e.key === "Enter") {
-              props.moves.guess(e.target.value);
-            }
-          }}
-        />
+    <div className="container">
+      <div className="left">
+        <h2>Player {props.ctx.currentPlayer} is drawing!</h2>
+        <div>
+          Type your guess:
+          <PlayerInput
+            onKeyPress={(e: any) => {
+              if (e.key === 'Enter') {
+                props.moves.guess(e.target.value);
+              }
+            }}
+          />
+        </div>
+        <GuessList guesses={props.G.guesses} />
       </div>
-      <GuessList guesses={props.G.guesses} />
+      <div className="right">
+        <Painted G={props.G} />
+      </div>
     </div>
   );
 };
@@ -82,10 +95,10 @@ export const SketchBoard = (props: BoardPropTypes) => {
   const stage = props.ctx?.activePlayers![props.playerID!];
 
   return (
-    <div style={{ height: "250px", border: "2px solid black" }}>
-      {stage === "draw" && <DrawStage {...props} />}
-      {stage === "guess" && <GuessStage {...props} />}
-      {stage === "announceWinner" && <AnnounceWinnerPhase {...props} />}
+    <div style={{ height: '250px', border: '2px solid black' }}>
+      {stage === 'draw' && <DrawStage {...props} />}
+      {stage === 'guess' && <GuessStage {...props} />}
+      {stage === 'announceWinner' && <AnnounceWinnerPhase {...props} />}
     </div>
   );
 };

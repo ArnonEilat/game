@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
+import { moveSyntheticComments } from 'typescript';
 
-export const usePainter = () => {
+export const usePainter = (moves: any) => {
   const canvas = useRef<HTMLCanvasElement>();
   const [isReady, setIsReady] = useState(false);
   const [isRegularMode, setIsRegularMode] = useState(true);
@@ -18,17 +19,30 @@ export const usePainter = () => {
 
   const ctx = useRef(canvas?.current?.getContext('2d'));
 
-  const drawOnCanvas = useCallback((event: any) => {
-    if (!ctx || !ctx.current) {
-      return;
-    }
-    ctx.current.beginPath();
-    ctx.current.moveTo(lastX.current, lastY.current);
-    ctx.current.lineTo(event.offsetX, event.offsetY);
-    ctx.current.stroke();
+  const drawOnCanvas = useCallback(
+    (event: any) => {
+      if (!ctx || !ctx.current) {
+        return;
+      }
 
-    [lastX.current, lastY.current] = [event.offsetX, event.offsetY];
-  }, []);
+      // Make the move to update the other players
+      console.log(moves.draw);
+      if (moves.draw) {
+        moves.draw({
+          xBegin: lastX.current,
+          yBegin: lastY.current,
+          xEnd: event.offsetX,
+          yEnd: event.offsetY,
+        });
+      }
+      ctx.current.beginPath();
+      ctx.current.moveTo(lastX.current, lastY.current);
+      ctx.current.lineTo(event.offsetX, event.offsetY);
+      ctx.current.stroke();
+      [lastX.current, lastY.current] = [event.offsetX, event.offsetY];
+    },
+    [moves]
+  );
 
   const handleMouseDown = useCallback((e: any) => {
     isDrawing.current = true;
@@ -70,7 +84,7 @@ export const usePainter = () => {
       canvas.current.addEventListener('mouseout', stopDrawing);
 
       canvas.current.width = 500;
-      canvas.current.height = 500;
+      canvas.current.height = 170;
 
       ctx.current.strokeStyle = '#000';
       ctx.current.lineJoin = 'round';
