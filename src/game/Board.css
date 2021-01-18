@@ -1,0 +1,11 @@
+.left {
+  width: 500px;
+}
+
+.right {
+  flex-grow: 1;
+}
+
+.container {
+  display: flex;
+}
