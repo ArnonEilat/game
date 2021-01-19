@@ -26,7 +26,6 @@ export const usePainter = (moves: any) => {
       }
 
       // Make the move to update the other players
-      console.log(moves.draw);
       if (moves.draw) {
         moves.draw({
           xBegin: lastX.current,

@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { Guess } from './types';
+import { Guess } from '../../game/types'
 import { Ctx } from 'boardgame.io';
-import './Board.css';
-import Painter from '../components/painter/painter';
-import { Painted } from '../components/painter/Painted';
+import './ControllerBoard.css'
+import Painter from '../../components/painter/painter';
 
 type BoardPropTypes = {
   G: {
@@ -21,25 +20,12 @@ const PlayerInput = (props: any) => (
   <input type="text" onKeyPress={props.onKeyPress} />
 );
 
-const GuessList = ({ guesses }: { guesses: Array<Guess> }) => {
-  return (
-    <ul>
-      {guesses.map((guess, i: number) => (
-        <li key={`guess${i}`}>{`Player ${guess.guesser} guessed ${
-          guess.correct ? 'correctly!' : guess.guess
-        }`}</li>
-      ))}
-    </ul>
-  );
-};
-
 const DrawStage = (props: BoardPropTypes) => {
   return (
     <div className="container">
       <div className="left">
         <h2>Your turn to draw!</h2>
         <div>Secret word is {props.G.correctWord}</div>
-        <GuessList guesses={props.G.guesses} />
       </div>
       <div className="right">
         <Painter moves={props.moves} />
@@ -63,39 +49,36 @@ const GuessStage = (props: BoardPropTypes) => {
             }}
           />
         </div>
-        <GuessList guesses={props.G.guesses} />
-      </div>
-      <div className="right">
-        <Painted G={props.G} />
       </div>
     </div>
   );
 };
 
 export const AnnounceWinnerPhase = (props: BoardPropTypes) => {
+  const isWinner = props.playerID === props.G.winner
+  const isCurrentPlayer = props.playerID === props.ctx?.currentPlayer 
+
   // Only run on mount
   useEffect(() => {
     setTimeout(() => {
-      const isCurrentPlayer = props.playerID === props.ctx.currentPlayer;
       if (isCurrentPlayer) {
         props.events?.endTurn!();
       }
-    }, 1000);
+    }, 1500);
   }, []);
 
   return (
     <div>
-      <h1>The grand and glorious winner is player {props.G.winner}</h1>
-      <h2>1,000,000 points!</h2>
+      <h1>{(isWinner || isCurrentPlayer) ? ':)' : ':('}</h1>
     </div>
   );
 };
 
-export const SketchBoard = (props: BoardPropTypes) => {
+export const ControllerBoard = (props: BoardPropTypes) => {
   const stage = props.ctx?.activePlayers![props.playerID!];
 
   return (
-    <div style={{ height: '250px', border: '2px solid black' }}>
+    <div style={{ height: '350px', border: '2px solid black' }}>
       {stage === 'draw' && <DrawStage {...props} />}
       {stage === 'guess' && <GuessStage {...props} />}
       {stage === 'announceWinner' && <AnnounceWinnerPhase {...props} />}

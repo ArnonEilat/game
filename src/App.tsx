@@ -1,22 +1,34 @@
 import React from 'react';
-import './App.css';
 import { Client } from 'boardgame.io/react';
 import { Local } from 'boardgame.io/multiplayer';
 import { Sketch } from './game/Game';
-import { SketchBoard } from './game/Board';
+import { ScreenBoard } from './components/ScreenBoard/ScreenBoard';
+import { ControllerBoard } from './components/ControllerBoard/ControllerBoard';
+import './App.css';
 
 const numPlayers = 3;
 
-const GameClient = Client({
+const ControllerClient = Client({
   game: Sketch,
-  board: SketchBoard,
+  board: ControllerBoard,
+  numPlayers,
+  multiplayer: Local(),
+});
+const ScreenClient = Client({
+  game: Sketch,
+  board: ScreenBoard,
   numPlayers,
   multiplayer: Local(),
 });
 const App = () => (
   <div>
+    <ScreenClient />
+    <div className="space" />
     {[...Array(numPlayers).keys()].map((num) => (
-      <GameClient key={`client-${num}`} playerID={`${num}`} />
+      <div key={`client-${num}`}>
+        <ControllerClient playerID={`${num}`} />
+        <div className="space" />
+      </div>
     ))}
   </div>
 );
