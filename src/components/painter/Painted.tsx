@@ -5,10 +5,10 @@ export const Painted = ({ G }: { G: any }) => {
   const canvasRef: any = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef?.current
-    canvas.width  = 500;
+    const canvas = canvasRef?.current;
+    canvas.width = 500;
     canvas.height = 400;
-  })
+  });
   useEffect(() => {
     const context = canvasRef?.current?.getContext!('2d');
     //Our first draw

@@ -38,7 +38,7 @@ export const AnnounceWinnerPhase = (props: BoardPropTypes) => {
   // Only run on mount
   useEffect(() => {
     setTimeout(() => {
-      const isCurrentPlayer = true
+      const isCurrentPlayer = true;
       if (isCurrentPlayer) {
         props.events?.endTurn!();
       }
@@ -54,12 +54,16 @@ export const AnnounceWinnerPhase = (props: BoardPropTypes) => {
 };
 
 export const ScreenBoard = (props: BoardPropTypes) => {
-  const stage = Object.values(props.ctx?.activePlayers!).includes('guess') ? ScreenStages.Guessing : ScreenStages.AnnouncingWinners
+  const stage = Object.values(props.ctx?.activePlayers!).includes('guess')
+    ? ScreenStages.Guessing
+    : ScreenStages.AnnouncingWinners;
 
   return (
     <div className="main">
       {stage === ScreenStages.Guessing && <GuessStage {...props} />}
-      {stage === ScreenStages.AnnouncingWinners && <AnnounceWinnerPhase {...props} />}
+      {stage === ScreenStages.AnnouncingWinners && (
+        <AnnounceWinnerPhase {...props} />
+      )}
     </div>
   );
 };

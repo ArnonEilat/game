@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Guess } from '../../game/types'
+import { Guess } from '../../game/types';
 import { Ctx } from 'boardgame.io';
-import './ControllerBoard.css'
+import './ControllerBoard.css';
 import Painter from '../../components/painter/painter';
 
 type BoardPropTypes = {
@@ -55,8 +55,8 @@ const GuessStage = (props: BoardPropTypes) => {
 };
 
 export const AnnounceWinnerPhase = (props: BoardPropTypes) => {
-  const isWinner = props.playerID === props.G.winner
-  const isCurrentPlayer = props.playerID === props.ctx?.currentPlayer 
+  const isWinner = props.playerID === props.G.winner;
+  const isCurrentPlayer = props.playerID === props.ctx?.currentPlayer;
 
   // Only run on mount
   useEffect(() => {
@@ -69,7 +69,7 @@ export const AnnounceWinnerPhase = (props: BoardPropTypes) => {
 
   return (
     <div>
-      <h1>{(isWinner || isCurrentPlayer) ? ':)' : ':('}</h1>
+      <h1>{isWinner || isCurrentPlayer ? ':)' : ':('}</h1>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Ctx } from "boardgame.io";
+import { Ctx } from 'boardgame.io';
 
 export type Guess = {
   guess: string;
