@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from 'react';
-import { moveSyntheticComments } from 'typescript';
 
 export const usePainter = (moves: any) => {
   const canvas = useRef<HTMLCanvasElement>();
