@@ -1,6 +1,6 @@
 import { Guess, Stroke } from './types';
 import { Ctx } from 'boardgame.io';
-import { words } from "../assets/words"
+import { words } from '../assets/words';
 
 const getRandomWord = (ctx: Ctx) =>
   words[Math.floor(ctx.random!.Number() * words.length)];
