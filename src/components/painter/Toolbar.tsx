@@ -35,16 +35,17 @@ const Button = styled.button<ButtonProps>`
     }
   }}
 `;
-const ColorInput = styled.input`
+
+type ColorButtonProps = {
+  color: string;
+};
+const ColorButton = styled.div<ColorButtonProps>`
   width: 25px;
-  display: block;
-  padding: 0px;
-  border: 0px;
+  height: 25px;
+  ${({ color }) => `background-color: ${color};`};
 `;
 
 export const Toolbar: React.FC<any> = ({
-  handleDownload,
-  dateUrl,
   handleClear,
   handleEraserMode,
   handleRegularMode,
@@ -57,7 +58,8 @@ export const Toolbar: React.FC<any> = ({
     <ToolbarWrapper>
       <ToolbarInnerBox>
         <ToolbarText>Brush color</ToolbarText>
-        <ColorInput type="color" onChange={handleColor} />
+        <ColorButton color={'#000000'} onClick={() => handleColor('#000000')} />
+        <ColorButton color={'#ff0057'} onClick={() => handleColor('#ff0057')} />
       </ToolbarInnerBox>
       <ToolbarInnerBox>
         <ToolbarText>Tools</ToolbarText>
@@ -91,10 +93,6 @@ export const Toolbar: React.FC<any> = ({
       <ToolbarInnerBox>
         <button onClick={handleClear}>Clear</button>
       </ToolbarInnerBox>
-
-      {/*<a download="image.png" onClick={handleDownload} href={dateUrl}>*/}
-      {/*  Save Image*/}
-      {/*</a>*/}
     </ToolbarWrapper>
   );
 };

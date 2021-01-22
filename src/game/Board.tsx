@@ -1,27 +1,14 @@
 import React, { useEffect } from 'react';
-import { Guess } from './types';
-import { Ctx } from 'boardgame.io';
+import { BoardPropTypes, Guess } from './types';
 import './Board.css';
 import Painter from '../components/painter/painter';
 import { Painted } from '../components/painter/Painted';
-
-type BoardPropTypes = {
-  G: {
-    correctWord: string;
-    guesses: Array<Guess>;
-    winner: string;
-  };
-  ctx: Ctx;
-  playerID: string | null;
-  events: any;
-  moves: any;
-};
 
 const PlayerInput = (props: any) => (
   <input type="text" onKeyPress={props.onKeyPress} />
 );
 
-const GuessList = ({ guesses }: { guesses: Array<Guess> }) => {
+export const GuessList = ({ guesses }: { guesses: Array<Guess> }) => {
   return (
     <ul>
       {guesses.map((guess, i: number) => (
