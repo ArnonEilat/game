@@ -1,4 +1,4 @@
-import { Guess, Stroke } from './types';
+import { Guess } from './types';
 import { Ctx } from 'boardgame.io';
 import { words } from '../assets/words';
 
@@ -18,15 +18,14 @@ const guess = (G: any, ctx: Ctx, guess: string) => {
   }
 };
 
-const draw = (G: any, ctx: Ctx, stroke: Stroke) => {
-  console.log('drawing a stroke!', stroke);
-  G.strokes.push(stroke);
+const setDataURL = (G: any, ctx: Ctx, dataURL: string) => {
+  G.dataURL = dataURL;
 };
 
 const getFreshState = (ctx: Ctx) => {
   const guesses: Array<Guess> = [];
-  const strokes: Array<Stroke> = [];
-  return { correctWord: getRandomWord(ctx), guesses, strokes };
+  const dataURL = '';
+  return { correctWord: getRandomWord(ctx), guesses, dataURL };
 };
 
 export const Sketch = {
@@ -39,7 +38,7 @@ export const Sketch = {
     },
     stages: {
       draw: {
-        moves: { draw },
+        moves: { setDataURL },
       },
       guess: {
         moves: { guess },

@@ -1,108 +1,99 @@
 import { useCallback, useRef, useState } from 'react';
-import { moveSyntheticComments } from 'typescript';
+
+const getOffset = (e: TouchEvent): [number, number] => {
+  const target = e?.target as HTMLElement;
+  const bcr = target?.getBoundingClientRect() as DOMRect;
+  const offsetX = e.targetTouches[0].clientX - bcr.x;
+  const offsetY = e.targetTouches[0].clientY - bcr.y;
+
+  return [offsetX, offsetY];
+};
+
+type PainterMode = 'Eraser' | 'Regular';
 
 export const usePainter = (moves: any) => {
   const canvas = useRef<HTMLCanvasElement>();
-  const [isReady, setIsReady] = useState(false);
-  const [isRegularMode, setIsRegularMode] = useState(true);
-  const [isEraser, setIsEraser] = useState(false);
 
-  const [currentColor, setCurrentColor] = useState('#000000');
-  const [currentWidth, setCurrentWidth] = useState(5);
+  const [mode, setMode] = useState<PainterMode>('Regular');
+  const drawingMode = useRef<PainterMode>('Regular');
 
-  const selectedColor = useRef('#000000');
-  const selectedLineWidth = useRef(5);
-  const lastX = useRef(0);
-  const lastY = useRef(0);
-  const isDrawing = useRef(false);
-  const isEraserMode = useRef(false);
+  const [currentColor, setCurrentColor] = useState<string>('#000000');
+  const selectedColor = useRef<string>('#000000');
 
-  const ctx = useRef(canvas?.current?.getContext('2d'));
+  const [currentWidth, setCurrentWidth] = useState<number>(5);
+  const selectedLineWidth = useRef<number>(5);
 
-  const drawOnCanvas = useCallback(
-    (event: any) => {
-      if (!ctx || !ctx.current) {
-        return;
-      }
+  const lastX = useRef<number>(0);
+  const lastY = useRef<number>(0);
 
-      // Make the move to update the other players
-      console.log(moves.draw);
-      if (moves.draw) {
-        moves.draw({
-          xBegin: lastX.current,
-          yBegin: lastY.current,
-          xEnd: event.offsetX,
-          yEnd: event.offsetY,
-        });
-      }
-      ctx.current.beginPath();
-      ctx.current.moveTo(lastX.current, lastY.current);
-      ctx.current.lineTo(event.offsetX, event.offsetY);
-      ctx.current.stroke();
-      [lastX.current, lastY.current] = [event.offsetX, event.offsetY];
-    },
-    [moves]
-  );
+  const ctx = useRef((canvas?.current as HTMLCanvasElement)?.getContext('2d'));
 
-  const handleMouseDown = useCallback((e: any) => {
-    isDrawing.current = true;
-    [lastX.current, lastY.current] = [e.offsetX, e.offsetY];
+  const handleMouseDown = useCallback((e: TouchEvent) => {
+    const [offsetX, offsetY] = getOffset(e);
+    [lastX.current, lastY.current] = [offsetX, offsetY];
   }, []);
 
-  const drawNormal = useCallback(
-    (e: any) => {
-      if (!isDrawing.current || !ctx.current) {
-        return;
-      }
-      ctx.current.strokeStyle = selectedColor.current;
+  const drawNormal = useCallback((event: TouchEvent) => {
+    const context = ctx?.current;
+    if (!context) {
+      return;
+    }
+    // abort drag
+    event.preventDefault();
 
-      setCurrentColor(selectedColor.current);
+    context.strokeStyle = selectedColor.current;
+    context.lineWidth = selectedLineWidth.current;
 
-      if (!isEraserMode.current) {
-        ctx.current.lineWidth = selectedLineWidth.current;
-      }
-      if (isEraserMode.current) {
-        ctx.current.globalCompositeOperation = 'destination-out';
-      } else {
-        ctx.current.globalCompositeOperation = 'source-over';
-      }
-      drawOnCanvas(e);
-    },
-    [drawOnCanvas]
-  );
+    if (drawingMode.current === 'Eraser') {
+      context.globalCompositeOperation = 'destination-out';
+    } else {
+      context.globalCompositeOperation = 'source-over';
+    }
+
+    const [offsetX, offsetY] = getOffset(event);
+    context.beginPath();
+    context.moveTo(lastX.current, lastY.current);
+    context.lineTo(offsetX, offsetY);
+    context.stroke();
+
+    [lastX.current, lastY.current] = [offsetX, offsetY];
+  }, []);
 
   const stopDrawing = useCallback(() => {
-    isDrawing.current = false;
+    const dataURL = canvas?.current?.toDataURL('image/png') as string;
+    moves.setDataURL(dataURL);
   }, []);
 
   const init = useCallback(() => {
-    ctx.current = canvas?.current?.getContext('2d');
-    if (canvas && canvas.current && ctx && ctx.current) {
-      canvas.current.addEventListener('mousedown', handleMouseDown);
-      canvas.current.addEventListener('mousemove', drawNormal);
-      canvas.current.addEventListener('mouseup', stopDrawing);
-      canvas.current.addEventListener('mouseout', stopDrawing);
+    const canvasElement = canvas.current as HTMLCanvasElement;
+    ctx.current = canvasElement?.getContext('2d') as CanvasRenderingContext2D;
 
-      canvas.current.width = 500;
-      canvas.current.height = 170;
+    if (canvas?.current && ctx?.current) {
+      canvasElement?.addEventListener('touchstart', handleMouseDown);
+      canvasElement?.addEventListener('touchmove', drawNormal);
+      canvasElement?.addEventListener('touchend', stopDrawing);
+      canvasElement?.addEventListener('touchcancel', stopDrawing);
+
+      canvasElement.width = 500;
+      canvasElement.height = 170;
 
       ctx.current.strokeStyle = '#000';
       ctx.current.lineJoin = 'round';
       ctx.current.lineCap = 'round';
       ctx.current.lineWidth = 5;
-      setIsReady(true);
     }
-  }, [drawNormal, handleMouseDown, stopDrawing]);
 
-  const handleRegularMode = useCallback(() => {
-    setIsRegularMode(true);
-    isEraserMode.current = false;
-    setIsEraser(false);
+    return () => {
+      canvasElement?.removeEventListener('touchstart', handleMouseDown);
+      canvasElement?.removeEventListener('touchmove', drawNormal);
+      canvasElement?.removeEventListener('touchend', stopDrawing);
+      canvasElement?.removeEventListener('touchcancel', stopDrawing);
+    };
   }, []);
 
-  const handleColor = (e: any) => {
-    setCurrentColor(e.currentTarget.value);
-    selectedColor.current = e.currentTarget.value;
+  const handleColor = (color: string) => {
+    setCurrentColor(color);
+    selectedColor.current = color;
   };
 
   const handleWidth = (e: any) => {
@@ -111,34 +102,45 @@ export const usePainter = (moves: any) => {
   };
 
   const handleClear = useCallback(() => {
-    if (!ctx || !ctx.current || !canvas || !canvas.current) {
+    if (!ctx?.current || !canvas?.current) {
       return;
     }
-    ctx.current.clearRect(0, 0, canvas.current.width, canvas.current.height);
+    const canvasElement = canvas.current as HTMLCanvasElement;
+
+    ctx.current.clearRect(
+      0,
+      0,
+      canvasElement?.width as number,
+      canvasElement?.height as number
+    );
+
+    stopDrawing();
   }, []);
 
-  const handleEraserMode = (e: any) => {
-    setIsRegularMode(true);
-    isEraserMode.current = true;
-    setIsEraser(true);
+  const handleEraserMode = () => {
+    drawingMode.current = 'Eraser';
+    setMode('Eraser');
+  };
+  const handleRegularMode = () => {
+    drawingMode.current = 'Regular';
+    setMode('Regular');
   };
 
   return [
     {
       canvas,
-      isReady,
       currentWidth,
       currentColor,
-      isRegularMode,
-      isEraser,
+      isRegularMode: drawingMode.current === 'Regular',
+      isEraser: drawingMode.current === 'Eraser',
     },
     {
       init,
       handleRegularMode,
+      handleEraserMode,
       handleColor,
       handleWidth,
       handleClear,
-      handleEraserMode,
     },
   ] as any;
 };

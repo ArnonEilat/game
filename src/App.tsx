@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import './App.css';
 import { Client } from 'boardgame.io/react';
 import { Local } from 'boardgame.io/multiplayer';
@@ -14,11 +14,11 @@ const GameClient = Client({
   multiplayer: Local(),
 });
 const App = () => (
-  <div>
+  <Fragment>
     {[...Array(numPlayers).keys()].map((num) => (
       <GameClient key={`client-${num}`} playerID={`${num}`} />
     ))}
-  </div>
+  </Fragment>
 );
 
 export default App;
