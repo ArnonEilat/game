@@ -14,7 +14,7 @@ export type GameState = {
   correctWord: string;
   guesses: Array<Guess>;
   winner: string;
-  players: {[id: string]: Player};
+  players: { [id: string]: Player };
 };
 
 export type Stroke = {
