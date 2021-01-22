@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { BoardPropTypes, Guess } from '../../game/types';
 import './ScreenBoard.css';
 import { Painted } from '../painter/Painted';
+import { idText } from 'typescript';
+import { ActivePlayers } from 'boardgame.io/dist/types/src/core/turn-order';
 
 enum ScreenStages {
   Guessing,
@@ -53,6 +55,26 @@ export const AnnounceWinnerPhase = (props: BoardPropTypes) => {
   );
 };
 
+const ScoreBoard = (props: BoardPropTypes) => {
+  const scoreBoard = Object.entries(props.G.players)
+    .map(([id, player]) => ({ name: id, score: player.score }))
+    .sort((a, b) => a.score - b.score);
+
+  return (
+    <div>
+      <h1>Scores!</h1>
+      <table>
+        {scoreBoard.map((player) => (
+          <tr>
+            <td>{`Player ${player.name}`}</td>
+            <td>{player.score}</td>
+          </tr>
+        ))}
+      </table>
+    </div>
+  );
+};
+
 export const ScreenBoard = (props: BoardPropTypes) => {
   const stage = Object.values(props.ctx?.activePlayers!).includes('guess')
     ? ScreenStages.Guessing
@@ -60,10 +82,15 @@ export const ScreenBoard = (props: BoardPropTypes) => {
 
   return (
     <div className="main">
-      {stage === ScreenStages.Guessing && <GuessStage {...props} />}
-      {stage === ScreenStages.AnnouncingWinners && (
-        <AnnounceWinnerPhase {...props} />
-      )}
+      <div className="main-left">
+        {stage === ScreenStages.Guessing && <GuessStage {...props} />}
+        {stage === ScreenStages.AnnouncingWinners && (
+          <AnnounceWinnerPhase {...props} />
+        )}
+      </div>
+      <div className="main-right">
+        <ScoreBoard {...props} />
+      </div>
     </div>
   );
 };
