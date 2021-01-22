@@ -5,13 +5,17 @@ export const Painted = ({ G }: { G: any }) => {
   const canvasRef: any = useRef(null);
 
   useEffect(() => {
+    const canvas = canvasRef?.current;
+    canvas.width = 500;
+    canvas.height = 400;
+  });
+  useEffect(() => {
     const context = canvasRef?.current?.getContext!('2d');
     //Our first draw
     context.fillStyle = 'white';
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
     const draw = (strokes: Array<Stroke>) => {
-      console.log('drawing!', context);
       if (!context) {
         return;
       }

@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from 'react';
-import { moveSyntheticComments } from 'typescript';
 
 export const usePainter = (moves: any) => {
   const canvas = useRef<HTMLCanvasElement>();
@@ -26,7 +25,6 @@ export const usePainter = (moves: any) => {
       }
 
       // Make the move to update the other players
-      console.log(moves.draw);
       if (moves.draw) {
         moves.draw({
           xBegin: lastX.current,

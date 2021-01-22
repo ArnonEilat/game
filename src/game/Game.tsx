@@ -19,7 +19,6 @@ const guess = (G: any, ctx: Ctx, guess: string) => {
 };
 
 const draw = (G: any, ctx: Ctx, stroke: Stroke) => {
-  console.log('drawing a stroke!', stroke);
   G.strokes.push(stroke);
 };
 
