@@ -1,4 +1,6 @@
-export type PainterProps = {};
+export type PainterProps = {
+  moves: any;
+};
 
 export type PainterState = {
   ptData: Point[];

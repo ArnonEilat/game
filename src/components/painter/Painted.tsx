@@ -1,42 +1,25 @@
-import React, { useRef, useEffect } from 'react';
-import { Stroke } from '../../game/types';
+import React from 'react';
+import { pathMapper } from '../NewPainter/utils';
 
 export const Painted = ({ G }: { G: any }) => {
-  const canvasRef: any = useRef(null);
+  const { strokes, stroke } = G;
 
-  useEffect(() => {
-    const canvas = canvasRef?.current;
-    canvas.width = 500;
-    canvas.height = 400;
-  });
-  useEffect(() => {
-    const context = canvasRef?.current?.getContext!('2d');
-    //Our first draw
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-
-    const draw = (strokes: Array<Stroke>) => {
-      if (!context) {
-        return;
-      }
-      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-      context.fillStyle = '#000000';
-
-      for (const stroke of strokes) {
-        context.beginPath();
-        context.moveTo(stroke.xBegin, stroke.yBegin);
-        context.lineTo(stroke.xEnd, stroke.yEnd);
-        context.stroke();
-      }
-    };
-
-    draw(G.strokes);
-  }, [G]);
+  let currentLine = null;
+  if (stroke?.length > 0) {
+    currentLine = pathMapper(stroke);
+  }
 
   return (
-    <canvas
-      style={{ boxShadow: '0px 0px 6px 2px #797979', width: '500px' }}
-      ref={canvasRef}
-    />
+    <svg
+      style={{
+        display: 'block',
+        width: 500,
+        height: 400,
+        border: '1px solid blue',
+      }}
+    >
+      {currentLine}
+      {strokes && strokes.map(pathMapper)}
+    </svg>
   );
 };

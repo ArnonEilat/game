@@ -18,14 +18,17 @@ const guess = (G: any, ctx: Ctx, guess: string) => {
   }
 };
 
-const draw = (G: any, ctx: Ctx, stroke: Stroke) => {
-  G.strokes.push(stroke);
+const draw = (G: any, ctx: Ctx, strokes: Stroke, stroke: Stroke) => {
+  if (strokes) {
+    G.strokes = strokes;
+  }
+  G.stroke = stroke;
 };
 
 const getFreshState = (ctx: Ctx) => {
   const guesses: Array<Guess> = [];
   const strokes: Array<Stroke> = [];
-  return { correctWord: getRandomWord(ctx), guesses, strokes };
+  return { correctWord: getRandomWord(ctx), guesses, strokes, stroke: [] };
 };
 
 export const Sketch = {

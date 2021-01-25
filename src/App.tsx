@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Client } from 'boardgame.io/react';
 import { Local } from 'boardgame.io/multiplayer';
 import { Sketch } from './game/Game';
-import NewPainter from './components/NewPainter/painter';
 import { ScreenBoard } from './components/ScreenBoard/ScreenBoard';
 import { ControllerBoard } from './components/ControllerBoard/ControllerBoard';
 import './App.css';
@@ -22,9 +21,7 @@ const ScreenClient = Client({
   multiplayer: Local(),
 });
 const App = () => (
-  <div>
-    <NewPainter />
-    <br />
+  <Fragment>
     <ScreenClient />
     <div className="space" />
     {[...Array(numPlayers).keys()].map((num) => (
@@ -33,7 +30,7 @@ const App = () => (
         <div className="space" />
       </div>
     ))}
-  </div>
+  </Fragment>
 );
 
 export default App;
