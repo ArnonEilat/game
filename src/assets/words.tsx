@@ -5,7 +5,6 @@ export const words = [
   'Ketchup',
   'Toothpaste',
   'Rainbow',
-  'Boardgame',
   'Hive',
   'Lemon',
   'Waffles',

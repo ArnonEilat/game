@@ -6,10 +6,15 @@ export type Guess = {
   correct: boolean;
 };
 
+export type Player = {
+  score: number;
+};
+
 export type GameState = {
   correctWord: string;
   guesses: Array<Guess>;
   winner: string;
+  players: { [id: string]: Player };
 };
 
 export type Stroke = {
