@@ -1,6 +1,6 @@
 import React from 'react';
 import simplify from 'simplify-js';
-import { PainterProps, PainterState, Point } from './types';
+import { Line, PainterProps, PainterState, Point } from './types';
 import { pathMapper, toPoint } from './utils';
 import cloneDeep from 'lodash.clonedeep';
 
@@ -14,7 +14,6 @@ export default class Painter extends React.Component<
     super(props);
     this.state = {
       ptData: [],
-      session: ([] as unknown) as [Point[]],
     };
 
     this.isMouseDown = false;
@@ -31,19 +30,28 @@ export default class Painter extends React.Component<
 
   ignore = () => {
     const { ptData } = this.state;
-    const { moves } = this.props;
+    const { setLines, lines, currentColor, currentWidth, moves } = this.props;
+
     this.isMouseDown = false;
 
     if (ptData.length === 0) {
       return;
     }
 
-    const simplified: Point[] = simplify(ptData, 6);
+    const simplified: Point[] = simplify(ptData, 1);
 
-    const session = cloneDeep(this.state.session);
-    session.push(simplified);
+    const session = cloneDeep(lines);
 
-    this.setState({ session, ptData: [] }, () => {
+    const line: Line = {
+      points: simplified,
+      color: currentColor,
+      width: currentWidth,
+    };
+    session.push(line);
+
+    setLines(session);
+
+    this.setState({ ptData: [] }, () => {
       moves.draw(session, []);
       this.updateRealTime();
     });
@@ -58,14 +66,29 @@ export default class Painter extends React.Component<
     this.setState({ ptData }, this.updateRealTime);
   };
 
-  updateRealTime = () => this.props.moves.draw(null, this.state.ptData);
+  updateRealTime = () => {
+    const { currentColor, currentWidth, moves } = this.props;
+
+    const line: Line = {
+      points: this.state.ptData,
+      color: currentColor,
+      width: currentWidth,
+    };
+
+    moves.draw(null, line);
+  };
 
   render() {
-    const { session, ptData } = this.state;
+    const { ptData } = this.state;
+    const { lines, currentColor, currentWidth } = this.props;
 
     let currentLine = null;
     if (ptData.length > 0) {
-      currentLine = pathMapper(ptData);
+      currentLine = pathMapper({
+        points: ptData,
+        color: currentColor,
+        width: currentWidth,
+      });
     }
 
     return (
@@ -81,8 +104,8 @@ export default class Painter extends React.Component<
         onMouseLeave={this.ignore}
         onMouseMove={this.onMouseMove}
       >
+        {lines.map(pathMapper)}
         {currentLine}
-        {session.map(pathMapper)}
       </svg>
     );
   }

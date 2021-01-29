@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Guess } from '../../game/types';
 import { Ctx } from 'boardgame.io';
 import './ControllerBoard.css';
-import NewPainter from '../NewPainter/painter';
+import Drawer from '../painter/Drawer';
 
 type BoardPropTypes = {
   G: {
@@ -28,7 +28,7 @@ const DrawStage = (props: BoardPropTypes) => {
         <div>Secret word is {props.G.correctWord}</div>
       </div>
       <div className="right">
-        <NewPainter moves={props.moves} />
+        <Drawer moves={props.moves} />
       </div>
     </div>
   );

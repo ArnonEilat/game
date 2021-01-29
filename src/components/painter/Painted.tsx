@@ -1,11 +1,11 @@
 import React from 'react';
-import { pathMapper } from '../NewPainter/utils';
+import { pathMapper } from './utils';
 
 export const Painted = ({ G }: { G: any }) => {
   const { strokes, stroke } = G;
 
   let currentLine = null;
-  if (stroke?.length > 0) {
+  if (stroke?.points?.length > 0) {
     currentLine = pathMapper(stroke);
   }
 
@@ -18,8 +18,8 @@ export const Painted = ({ G }: { G: any }) => {
         border: '1px solid blue',
       }}
     >
-      {currentLine}
       {strokes && strokes.map(pathMapper)}
+      {currentLine}
     </svg>
   );
 };
