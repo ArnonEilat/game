@@ -29,7 +29,7 @@ export default class Painter extends React.Component<
     this.setState({ ptData }, this.updateRealTime);
   };
 
-  ignore = () => {
+  onMouseEnd = () => {
     const { ptData } = this.state;
     const { setLines, lines, currentColor, currentWidth, moves } = this.props;
 
@@ -102,8 +102,8 @@ export default class Painter extends React.Component<
           border: '1px solid red',
         }}
         onMouseDown={this.onMouseDown}
-        onMouseUp={this.ignore}
-        onMouseLeave={this.ignore}
+        onMouseUp={this.onMouseEnd}
+        onMouseLeave={this.onMouseEnd}
         onMouseMove={this.onMouseMove}
       >
         {lines.map((l: Line, i: number) => (
