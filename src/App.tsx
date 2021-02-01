@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Client } from 'boardgame.io/react';
 import { Local } from 'boardgame.io/multiplayer';
 import { Sketch } from './game/Game';
@@ -21,7 +21,7 @@ const ScreenClient = Client({
   multiplayer: Local(),
 });
 const App = () => (
-  <div>
+  <Fragment>
     <ScreenClient />
     <div className="space" />
     {[...Array(numPlayers).keys()].map((num) => (
@@ -30,7 +30,7 @@ const App = () => (
         <div className="space" />
       </div>
     ))}
-  </div>
+  </Fragment>
 );
 
 export default App;

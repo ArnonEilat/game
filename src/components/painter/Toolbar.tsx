@@ -2,7 +2,7 @@ import { faEraser, faPaintBrush } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const ToolbarWrapper = styled.div`
   display: flex;
@@ -24,53 +24,98 @@ const ToolbarInnerBox = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
+const ColorsInnerBox = styled.div`
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
 
-type ButtonProps = {
+interface ButtonProps {
   isActive: boolean;
-};
+}
 const Button = styled.button<ButtonProps>`
   ${({ isActive }) => {
     if (isActive) {
-      return `  background-color: maroon;`;
+      return `background-color: maroon;`;
     }
   }}
 `;
-const ColorInput = styled.input`
+
+interface ColorButtonProps extends ButtonProps {
+  color: string;
+}
+
+const ColorButton = styled.div<ColorButtonProps>`
   width: 25px;
+  height: 25px;
   display: block;
   padding: 0px;
   border: 0px;
+
+  ${({ color }) => {
+    return css`
+      background-color: ${color};
+    `;
+  }}
+  ${({ isActive }) => {
+    if (isActive) {
+      return css`
+        border: 3px solid #00ff4e;
+      `;
+    }
+    return css`
+      border: 3px solid #a0a560;
+    `;
+  }}
 `;
 
 export const Toolbar: React.FC<any> = ({
-  handleDownload,
-  dateUrl,
   handleClear,
-  handleEraserMode,
-  handleRegularMode,
+  setDrawingMode,
   handleColor,
   handleWidth,
-  isRegularMode,
-  isEraser,
+  drawingMode,
+  color,
+  width,
 }) => {
   return (
     <ToolbarWrapper>
       <ToolbarInnerBox>
         <ToolbarText>Brush color</ToolbarText>
-        <ColorInput type="color" onChange={handleColor} />
+        <ColorsInnerBox>
+          <ColorButton
+            isActive={color === 'red'}
+            color={'red'}
+            onClick={() => handleColor('red')}
+          />
+          <ColorButton
+            isActive={color === 'blue'}
+            color={'blue'}
+            onClick={() => handleColor('blue')}
+          />
+          <ColorButton
+            isActive={color === 'black'}
+            color={'black'}
+            onClick={() => handleColor('black')}
+          />
+        </ColorsInnerBox>
       </ToolbarInnerBox>
       <ToolbarInnerBox>
         <ToolbarText>Tools</ToolbarText>
         <ToolbarInnerBox>
           <div>
             <Button
-              isActive={isRegularMode && !isEraser}
-              onClick={handleRegularMode}
+              isActive={drawingMode === 'draw'}
+              onClick={() => setDrawingMode('draw')}
             >
               <FontAwesomeIcon icon={faPaintBrush} />
             </Button>
-
-            <Button isActive={isEraser} onClick={handleEraserMode}>
+            <Button
+              isActive={drawingMode === 'erase'}
+              onClick={() => setDrawingMode('erase')}
+            >
               <FontAwesomeIcon icon={faEraser} />
             </Button>
           </div>
@@ -81,20 +126,17 @@ export const Toolbar: React.FC<any> = ({
         <ToolbarText>Brush size</ToolbarText>
 
         <input
-          defaultValue="5"
           type="range"
-          min="10"
-          max="90"
-          onChange={handleWidth}
+          min="1"
+          max="10"
+          step={0.2}
+          value={width}
+          onChange={(e) => handleWidth((e.target.value as unknown) as number)}
         />
       </ToolbarInnerBox>
       <ToolbarInnerBox>
         <button onClick={handleClear}>Clear</button>
       </ToolbarInnerBox>
-
-      {/*<a download="image.png" onClick={handleDownload} href={dateUrl}>*/}
-      {/*  Save Image*/}
-      {/*</a>*/}
     </ToolbarWrapper>
   );
 };

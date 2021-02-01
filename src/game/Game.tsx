@@ -19,14 +19,22 @@ const guess = (G: GameState, ctx: Ctx, guess: string) => {
   }
 };
 
-const draw = (G: any, ctx: Ctx, stroke: Stroke) => {
-  G.strokes.push(stroke);
+const draw = (G: any, ctx: Ctx, strokes: Stroke, currentStroke: Stroke) => {
+  if (strokes) {
+    G.strokes = strokes;
+  }
+  G.currentStroke = currentStroke;
 };
 
 const getFreshState = (ctx: Ctx) => {
   const guesses: Array<Guess> = [];
   const strokes: Array<Stroke> = [];
-  return { correctWord: getRandomWord(ctx), guesses, strokes };
+  return {
+    correctWord: getRandomWord(ctx),
+    guesses,
+    strokes,
+    currentStroke: [],
+  };
 };
 
 const getPlayers = (ctx: Ctx) =>
