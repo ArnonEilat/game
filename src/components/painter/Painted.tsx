@@ -1,13 +1,10 @@
 import React from 'react';
-import { pathMapper } from './utils';
+import { LinePath } from './LinePath';
+
+import { Line } from './types';
 
 export const Painted = ({ G }: { G: any }) => {
   const { strokes, stroke } = G;
-
-  let currentLine = null;
-  if (stroke?.points?.length > 0) {
-    currentLine = pathMapper(stroke);
-  }
 
   return (
     <svg
@@ -18,8 +15,10 @@ export const Painted = ({ G }: { G: any }) => {
         border: '1px solid blue',
       }}
     >
-      {strokes && strokes.map(pathMapper)}
-      {currentLine}
+      {strokes &&
+        strokes.map((l: Line, i: number) => <LinePath line={l} key={i} />)}
+
+      {stroke?.points?.length > 0 && <LinePath line={stroke} />}
     </svg>
   );
 };

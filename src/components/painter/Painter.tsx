@@ -1,8 +1,9 @@
 import React from 'react';
 import simplify from 'simplify-js';
 import { Line, PainterProps, PainterState, Point } from './types';
-import { pathMapper, toPoint } from './utils';
+import { toPoint } from './utils';
 import cloneDeep from 'lodash.clonedeep';
+import { LinePath } from './LinePath';
 
 export default class Painter extends React.Component<
   PainterProps,
@@ -84,11 +85,12 @@ export default class Painter extends React.Component<
 
     let currentLine = null;
     if (ptData.length > 0) {
-      currentLine = pathMapper({
+      const l: Line = {
         points: ptData,
         color: currentColor,
         width: currentWidth,
-      });
+      };
+      currentLine = <LinePath line={l} />;
     }
 
     return (
@@ -104,7 +106,9 @@ export default class Painter extends React.Component<
         onMouseLeave={this.ignore}
         onMouseMove={this.onMouseMove}
       >
-        {lines.map(pathMapper)}
+        {lines.map((l: Line, i: number) => (
+          <LinePath line={l} key={i} />
+        ))}
         {currentLine}
       </svg>
     );
